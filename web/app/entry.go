@@ -1,10 +1,10 @@
-package src
+package app
 
 import (
   "context"
   "github.com/gin-gonic/gin"
-  "github.com/w-xuefeng/yg-auth-go/src/config"
-  "github.com/w-xuefeng/yg-auth-go/src/router"
+  "github.com/w-xuefeng/yg-auth-go/web/app/config"
+  "github.com/w-xuefeng/yg-auth-go/web/app/router"
   "log"
   "net/http"
   "os"
