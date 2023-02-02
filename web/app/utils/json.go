@@ -43,16 +43,6 @@ func UniJsonFail[T interface{}](
 	}
 }
 
-func LegacyJson[T interface{}](
-	status bool,
-	data T,
-) interfaces.LegacyResponse[T] {
-	return interfaces.LegacyResponse[T]{
-		Status: status,
-    ResData: data,
-	}
-}
-
 func LegacyJsonOk[T interface{}](data T) interfaces.LegacyResponse[T] {
 	return interfaces.LegacyResponse[T]{
 		Status: true,
@@ -60,9 +50,10 @@ func LegacyJsonOk[T interface{}](data T) interfaces.LegacyResponse[T] {
 	}
 }
 
-func LegacyJsonFail[T interface{}](data T) interfaces.LegacyResponse[T] {
-	return interfaces.LegacyResponse[T]{
+func LegacyJsonFail(titleAndError ...string) interfaces.LegacyResponse[any] {
+	return interfaces.LegacyResponse[any]{
 		Status: false,
-    ResData: data,
+    Title: titleAndError[0],
+    Error: titleAndError[1],
 	}
 }
