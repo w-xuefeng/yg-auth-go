@@ -3,7 +3,7 @@ yg-auth 项目的 go 实现
 
 - 1.统一登录
   - `POST /auth`
-  - `Request Body` 结构如下：
+  - Request Body 结构如下：
     ````json
     {
       "stuid": "c3R1aWQ=",
@@ -21,7 +21,7 @@ yg-auth 项目的 go 实现
 
 - 2.token 换取用户信息
   - `POST /auth`
-  - `Request Body` 结构如下：
+  - Request Body 结构如下：
     ````json
     {
       "token": "xxxxxxxxxx",
@@ -64,7 +64,7 @@ yg-auth 项目的 go 实现
     
 - 3.校验注册码
   - `POST /auth`
-  - `Request Body` 结构如下：
+  - Request Body 结构如下：
     ````json
     {
       "regcode": "cnJycnI="
