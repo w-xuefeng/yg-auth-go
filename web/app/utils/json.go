@@ -12,7 +12,10 @@ func UniJson[T interface{}](
 	code int64,
 ) interfaces.UniformResponse[T] {
 	return interfaces.UniformResponse[T]{
-		Success: success, Message: message, Code: code, Data: data,
+		Success: success,
+    Message: message,
+    Code: code,
+    Data: data,
 	}
 }
 
@@ -20,7 +23,10 @@ func UniJsonOk[T interface{}](
 	data T,
 ) interfaces.UniformResponse[T] {
 	return interfaces.UniformResponse[T]{
-		Success: true, Message: config.ResMsgOk, Code: config.ResCodeOk, Data: data,
+		Success: true,
+    Message: config.ResMsgOk,
+    Code: config.ResCodeOk,
+    Data: data,
 	}
 }
 
@@ -30,6 +36,33 @@ func UniJsonFail[T interface{}](
 	message string,
 ) interfaces.UniformResponse[T] {
 	return interfaces.UniformResponse[T]{
-		Success: false, Message: message, Code: code, Data: data,
+		Success: false,
+    Message: message,
+    Code: code,
+    Data: data,
+	}
+}
+
+func LegacyJson[T interface{}](
+	status bool,
+	data T,
+) interfaces.LegacyResponse[T] {
+	return interfaces.LegacyResponse[T]{
+		Status: status,
+    ResData: data,
+	}
+}
+
+func LegacyJsonOk[T interface{}](data T) interfaces.LegacyResponse[T] {
+	return interfaces.LegacyResponse[T]{
+		Status: true,
+    ResData: data,
+	}
+}
+
+func LegacyJsonFail[T interface{}](data T) interfaces.LegacyResponse[T] {
+	return interfaces.LegacyResponse[T]{
+		Status: false,
+    ResData: data,
 	}
 }
