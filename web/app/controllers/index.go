@@ -1,10 +1,11 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/w-xuefeng/yg-auth-go/web/app/config"
 	"github.com/w-xuefeng/yg-auth-go/web/app/utils"
-	"net/http"
 )
 
 func Index(c *gin.Context) {
@@ -12,5 +13,5 @@ func Index(c *gin.Context) {
 }
 
 func Welcome(c *gin.Context) {
-	c.JSON(http.StatusOK, utils.UniJson("welcome", true, "success", 200))
+	c.JSON(http.StatusOK, utils.UniJsonOk("welcome"))
 }
