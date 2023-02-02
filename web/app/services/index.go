@@ -2,54 +2,148 @@ package services
 
 import (
 	"encoding/base64"
+	"encoding/json"
+	"errors"
+	"github.com/w-xuefeng/yg-auth-go/web/app/interfaces"
+	"io"
 	"net/http"
 	"strings"
 
 	"github.com/w-xuefeng/yg-auth-go/web/app/config"
 )
 
-func Login(stuid string, password string) (any, error) {
-	// header('Access-Control-Allow-Origin: *');
-	// header('Access-Control-Allow-Methods: POST, GET, PUT, PATCH, OPTIONS, DELETE');
-	// header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, X-URL-PATH, X-Access-Token, Authorization');
-	// header('Content-type: application/json');
-	// $infor = [
-	//     'url' => $GLOBALS['BASEURL'] . '/session',
-	//     'data' => [
-	//         'stuid' => base64_decode($data['stuid']),
-	//         'password' => base64_decode($data['password']),
-	//     ],
-	//     'refererUrl' => 'https://auth.youngon.work',
-	//     'contentType' => 'application/json',
-	// ];
-	// $resdata = json_decode(httpPost($infor), true);
-	// $a = $resdata['status'] ? ['status' => true, 'resdata' => ['token' => $resdata['dToken']]] : $resdata;
-
+func Login(stuid string, password string) (interfaces.ResLogin, error) {
 	decodeStuid, err := base64.StdEncoding.DecodeString(stuid)
+	res := interfaces.ResLogin{}
 	if err != nil {
-		return nil, err
+		return res, err
 	}
 
 	decodePassword, err := base64.StdEncoding.DecodeString(password)
 	if err != nil {
-		return nil, err
+		return res, err
 	}
 
 	requestBody := strings.NewReader("stuid=" + string(decodeStuid) + "&password=" + string(decodePassword))
 
 	req, err := http.NewRequest("POST", config.UrlLogin, requestBody)
 	if err != nil {
-		return nil, err
+		return res, err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("RefererUrl", config.AuthIndex)
 	response, err := (&http.Client{}).Do(req)
 	if err != nil || response.StatusCode != http.StatusOK {
-		return nil, err
+		return res, err
 	}
-	reader := response.Body
-	return reader, nil
+
+	rs, err := io.ReadAll(response.Body)
+	if err != nil {
+		return res, err
+	}
+
+	type RsType struct {
+		Status bool   `json:"status"`
+		Title  string `json:"title"`
+		DToken string `json:"dToken"`
+	}
+
+	var rsJson RsType
+	err = json.Unmarshal(rs, &rsJson)
+	if err != nil {
+		return res, err
+	}
+
+	if rsJson.Status {
+		res.Token = rsJson.DToken
+		return res, nil
+	}
+
+	errMessage := "request error"
+
+	if rsJson.Title != "" {
+		errMessage = rsJson.Title
+	}
+
+	return res, errors.New(errMessage)
+
 }
-func GetUserByToken(token string) {}
-func GetRegCode(regCode string)   {}
+
+func GetUserByToken(token string) (interfaces.AuthUser, error) {
+	queries := "?dToken=" + token
+	res := interfaces.AuthUser{}
+	req, err := http.NewRequest("GET", config.UrlUsers+queries, nil)
+	if err != nil {
+		return res, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("RefererUrl", config.AuthIndex)
+	response, err := (&http.Client{}).Do(req)
+	if err != nil || response.StatusCode != http.StatusOK {
+		return res, err
+	}
+
+	rs, err := io.ReadAll(response.Body)
+	if err != nil {
+		return res, err
+	}
+
+	type RsType struct {
+		Status  bool                `json:"status"`
+		Title   string              `json:"title"`
+		Resdata interfaces.AuthUser `json:"resdata"`
+	}
+
+	var rsJson RsType
+	err = json.Unmarshal(rs, &rsJson)
+	if err != nil {
+		return res, err
+	}
+
+	if rsJson.Status {
+		return rsJson.Resdata, nil
+	}
+
+	errMessage := "request error"
+
+	if rsJson.Title != "" {
+		errMessage = rsJson.Title
+	}
+
+	return res, errors.New(errMessage)
+}
+
+func CheckRegCode(regCode string) (bool, error) {
+	decodeRegCode, err := base64.StdEncoding.DecodeString(regCode)
+	if err != nil {
+		return false, err
+	}
+
+	req, err := http.NewRequest("GET", config.UrlRegCode, nil)
+	if err != nil {
+		return false, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("RefererUrl", config.AuthIndex)
+	response, err := (&http.Client{}).Do(req)
+	if err != nil || response.StatusCode != http.StatusOK {
+		return false, err
+	}
+
+	rs, err := io.ReadAll(response.Body)
+	if err != nil {
+		return false, err
+	}
+
+	type RsType struct {
+		Rcode string `json:"Rcode"`
+	}
+
+	var rsJson RsType
+	err = json.Unmarshal(rs, &rsJson)
+	if err != nil {
+		return false, err
+	}
+	return rsJson.Rcode == string(decodeRegCode), nil
+}

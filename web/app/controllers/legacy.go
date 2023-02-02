@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/w-xuefeng/yg-auth-go/web/app/services"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,16 +16,31 @@ func Auth(c *gin.Context) {
 		c.JSON(http.StatusOK, utils.LegacyJsonFail(config.ResMsgBodyMissing))
 		return
 	}
-	if body.Stuid != "" {
-		c.JSON(http.StatusOK, utils.LegacyJsonOk(body.Stuid))
+	if body.Stuid != "" && body.Password != "" {
+		loginInfo, err := services.Login(body.Stuid, body.Password)
+		if err != nil {
+			c.JSON(http.StatusOK, utils.LegacyJsonFail(err.Error()))
+			return
+		}
+		c.JSON(http.StatusOK, utils.LegacyJsonOk(loginInfo))
 		return
 	}
 	if body.Token != "" {
-		c.JSON(http.StatusOK, utils.LegacyJsonOk(body.Token))
+		userInfo, err := services.GetUserByToken(body.Token)
+		if err != nil {
+			c.JSON(http.StatusOK, utils.LegacyJsonFail(err.Error()))
+			return
+		}
+		c.JSON(http.StatusOK, utils.LegacyJsonOk(userInfo))
 		return
 	}
 	if body.Regcode != "" {
-		c.JSON(http.StatusOK, utils.LegacyJsonOk(body.Regcode))
+		next, err := services.CheckRegCode(body.Regcode)
+		if err != nil {
+			c.JSON(http.StatusOK, utils.LegacyJsonFail(err.Error()))
+			return
+		}
+		c.JSON(http.StatusOK, interfaces.LegacyResponse[any]{Status: next})
 		return
 	}
 	c.JSON(http.StatusOK, utils.LegacyJsonFail(config.ResMsgBodyMissing))
