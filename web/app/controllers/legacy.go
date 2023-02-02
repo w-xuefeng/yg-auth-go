@@ -11,15 +11,21 @@ import (
 
 func Auth(c *gin.Context) {
 	var body interfaces.AuthBody
-	if err := c.BindJSON(&body); err != nil {
+	if err := c.ShouldBind(&body); err != nil {
 		c.JSON(http.StatusOK, utils.LegacyJsonFail(config.ResMsgBodyMissing))
 		return
 	}
-  if (body.Stuid != "") {
-	  c.JSON(http.StatusOK, utils.LegacyJsonOk(body.Stuid))
-  } else   if (body.Token != "") {
-	  c.JSON(http.StatusOK, utils.LegacyJsonOk(body.Token))
-  } else if (body.Regcode != "") {
-	  c.JSON(http.StatusOK, utils.LegacyJsonOk(body.Regcode))
-  }
+	if body.Stuid != "" {
+		c.JSON(http.StatusOK, utils.LegacyJsonOk(body.Stuid))
+		return
+	}
+	if body.Token != "" {
+		c.JSON(http.StatusOK, utils.LegacyJsonOk(body.Token))
+		return
+	}
+	if body.Regcode != "" {
+		c.JSON(http.StatusOK, utils.LegacyJsonOk(body.Regcode))
+		return
+	}
+	c.JSON(http.StatusOK, utils.LegacyJsonFail(config.ResMsgBodyMissing))
 }
