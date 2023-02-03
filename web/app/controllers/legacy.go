@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"github.com/w-xuefeng/yg-auth-go/web/app/services"
 	"net/http"
+
+	"github.com/w-xuefeng/yg-auth-go/web/app/services"
 
 	"github.com/gin-gonic/gin"
 	"github.com/w-xuefeng/yg-auth-go/web/app/config"

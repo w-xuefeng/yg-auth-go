@@ -1,11 +1,11 @@
 package config
 
 const (
-	ResCodeOk = 200
-  ResCodeBodyMissing = 1001
+	ResCodeOk          = 200
+	ResCodeBodyMissing = 1001
 )
 
 const (
-	ResMsgOk  = "success"
-  ResMsgBodyMissing = "request body missing"
+	ResMsgOk          = "success"
+	ResMsgBodyMissing = "request body missing"
 )

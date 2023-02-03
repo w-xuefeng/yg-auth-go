@@ -4,10 +4,11 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"github.com/w-xuefeng/yg-auth-go/web/app/interfaces"
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/w-xuefeng/yg-auth-go/web/app/interfaces"
 
 	"github.com/w-xuefeng/yg-auth-go/web/app/config"
 )

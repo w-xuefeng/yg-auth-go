@@ -1,5 +1,5 @@
 package config
 
 const (
-  ServiceEntryAddr = ":9999"
+	ServiceEntryAddr = ":9999"
 )

@@ -59,7 +59,7 @@ func LegacyJsonFail(titleAndError ...string) interfaces.LegacyResponse[any] {
 			rs.Title = item
 		}
 
-  if i == 1 && item != ""{
+		if i == 1 && item != "" {
 			rs.Error = item
 		}
 	}
